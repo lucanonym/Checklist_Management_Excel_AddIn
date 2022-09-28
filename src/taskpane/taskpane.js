@@ -14,8 +14,8 @@ if (!Office.context.requirements.isSetSupported('ExcelApi', '1.7')) {
 
 // Assign event handlers and other initialization logic.
 document.getElementById("delete-checkboxes").onclick = deleteCheckboxes;
-    document.getElementById("sideload-msg").style.display = "none";
-    document.getElementById("app-body").style.display = "flex";
+document.getElementById("sideload-msg").style.display = "none";
+document.getElementById("app-body").style.display = "flex";
 
   }
 });
@@ -25,11 +25,12 @@ async function deleteCheckboxes() {
     let sheet = context.workbook.worksheets.getItem("Test");
     let finishedSheet = sheet.copy(Excel.WorksheetPositionType.after, sheet);
     finishedSheet.name = "FinishedCalculation";
-    await context.sync();
+    //await context.sync();
 
     // copy is working correctly
+
     
-    let sheetCount = finishedSheet.tables.getCount();
+    let sheetCount = sheet.tables.getCount();
     let currentTable;
 
     for (let i = 0; i < sheetCount; i++) {
