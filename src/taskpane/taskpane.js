@@ -13,24 +13,54 @@ if (!Office.context.requirements.isSetSupported('ExcelApi', '1.7')) {
 }
 
 // Assign event handlers and other initialization logic.
-document.getElementById("delete-checkboxes").onclick = deleteCheckboxes;
+document.getElementById("delete-checkboxes").onclick = testEineTabelle;
 document.getElementById("sideload-msg").style.display = "none";
 document.getElementById("app-body").style.display = "flex";
 
   }
 });
-
-async function deleteCheckboxes() {
+async function testEineTabelle() {
   await Excel.run(async (context) => {
-    let sheet = context.workbook.worksheets.getItem("Test");
+    let sheet = context.workbook.worksheets.getItem('TestOhneLayout');
     let finishedSheet = sheet.copy(Excel.WorksheetPositionType.after, sheet);
-    finishedSheet.name = "FinishedCalculation";
-    //await context.sync();
+    finishedSheet.name = 'FinishedCalculation';
+    await context.sync();
+    
 
     // copy is working correctly
 
+    let table = finishedSheet.tables.load('tables');
+    let filteringTable = table.getItemAt(0);
+    filterTable(filteringTable);
+    await context.sync();
+
+    // clearing table    
+
     
-    let sheetCount = sheet.tables.getCount();
+
+    
+    
+  })
+  .catch(function (error) {
+      console.log("Error: " + error);
+      if (error instanceof OfficeExtension.Error) {
+          console.log("Debug info: " + JSON.stringify(error.debugInfo));
+      }
+  });
+
+
+async function testMehrereTabellen() {
+  await Excel.run(async (context) => {
+    let sheet = context.workbook.worksheets.getItem('TestEinzelneTabellen');
+    let finishedSheet = sheet.copy(Excel.WorksheetPositionType.after, sheet);
+    finishedSheet.name = 'FinishedCalculation';
+    await context.sync();
+
+    // copy is working correctly
+
+    //let sheetCount = 5;
+    let sheetCount = sheet.tables.count;
+    console.log(sheetCount);
     let currentTable;
 
     for (let i = 0; i < sheetCount; i++) {
@@ -38,20 +68,6 @@ async function deleteCheckboxes() {
       filterTable(currentTable);
       await context.sync();
     };
-
-
-
-    
-    
-  
-
-    
-    
-  
-    
-
-  
-    
     await context.sync();
   })
   .catch(function (error) {
@@ -66,12 +82,13 @@ async function deleteCheckboxes() {
   
   
   
-  function filterTable(firstTable) {
-    let amountFilter = firstTable.columns.getItem("Menge").filter;
-    amountFilter.apply({
-      filterOn: Excel.FilterOn.custom,
-      criterion1: ">=1",
-    });
-  }
+}
+function filterTable(firstTable) {
+  let amountFilter = firstTable.columns.getItem("Menge").filter;
+  amountFilter.apply({
+    filterOn: Excel.FilterOn.custom,
+    criterion1: ">=1",
+  });
+}
 }
 
