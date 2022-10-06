@@ -25,16 +25,23 @@ async function testEineTabelle() {
     let finishedSheet = sheet.copy(Excel.WorksheetPositionType.after, sheet);
     finishedSheet.name = 'FinishedCalculation';
     await context.sync();
+
+
+    // hiding config
+
+    finishedSheet.getRange('E:E').columnHidden = true;
     
 
-    // copy is working correctly
+    // filtering rows
 
     let table = finishedSheet.tables.load('tables');
     let filteringTable = table.getItemAt(0);
     filterTable(filteringTable);
     await context.sync();
 
-    // clearing table    
+   
+    
+    
 
     
 
@@ -49,42 +56,8 @@ async function testEineTabelle() {
   });
 
 
-async function testMehrereTabellen() {
-  await Excel.run(async (context) => {
-    let sheet = context.workbook.worksheets.getItem('TestEinzelneTabellen');
-    let finishedSheet = sheet.copy(Excel.WorksheetPositionType.after, sheet);
-    finishedSheet.name = 'FinishedCalculation';
-    await context.sync();
-
-    // copy is working correctly
-
-    //let sheetCount = 5;
-    let sheetCount = sheet.tables.count;
-    console.log(sheetCount);
-    let currentTable;
-
-    for (let i = 0; i < sheetCount; i++) {
-      currentTable = finishedSheet.tables.getItemAt(i);
-      filterTable(currentTable);
-      await context.sync();
-    };
-    await context.sync();
-  })
-  .catch(function (error) {
-      console.log("Error: " + error);
-      if (error instanceof OfficeExtension.Error) {
-          console.log("Debug info: " + JSON.stringify(error.debugInfo));
-      }
-  });
-
-
-
-  
-  
-  
-}
 function filterTable(firstTable) {
-  let amountFilter = firstTable.columns.getItem("Menge").filter;
+  let amountFilter = firstTable.columns.getItem('Config').filter;
   amountFilter.apply({
     filterOn: Excel.FilterOn.custom,
     criterion1: ">=1",
