@@ -9,7 +9,7 @@ Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
     // Determine if the user's version of Office supports all the Office.js APIs that are used in the tutorial.
 if (!Office.context.requirements.isSetSupported('ExcelApi', '1.7')) {
-  console.log('Sorry. The tutorial add-in uses Excel.js APIs that are not available in your version of Office.');
+  console.log('Sorry. This add-in uses Excel.js APIs that are not available in your version of Office.');
 }
 
 // Assign event handlers and other initialization logic.
@@ -21,15 +21,18 @@ document.getElementById("app-body").style.display = "flex";
 });
 async function testEineTabelle() {
   await Excel.run(async (context) => {
-    let sheet = context.workbook.worksheets.getItem('TestOhneLayout');
+    let sheet = context.workbook.worksheets.getActiveWorksheet();
     let finishedSheet = sheet.copy(Excel.WorksheetPositionType.after, sheet);
     finishedSheet.name = 'FinishedCalculation';
     await context.sync();
 
 
-    // hiding config
+    // hiding config and checkboxes
 
-    finishedSheet.getRange('E:E').columnHidden = true;
+    finishedSheet.getRange('F:F').columnHidden = true;
+    finishedSheet.getRange('I:I').columnHidden = true;
+    finishedSheet.getRange('H:H').columnHidden = true;
+
     
 
     // filtering rows
@@ -38,14 +41,6 @@ async function testEineTabelle() {
     let filteringTable = table.getItemAt(0);
     filterTable(filteringTable);
     await context.sync();
-
-   
-    
-    
-
-    
-
-    
     
   })
   .catch(function (error) {
